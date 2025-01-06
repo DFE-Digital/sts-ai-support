@@ -1,0 +1,23 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "STS AI Support";
+}
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <form method="post">
+        <input type="text" name="prompt" size="80" required/>
+        <input type="submit" value="Submit" />
+    </form>
+
+    <pre style="text-align: left">
+        
+        Example prompts:
+        
+        How many moons does the earth have?
+    </pre>
+
+    @if (Model.Reply != null) {
+        <p class="alert alert-success">@Model.Reply</p>
+    }
+</div>
