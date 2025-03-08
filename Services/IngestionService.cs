@@ -10,54 +10,46 @@ namespace sts_ai_support.Services
 
         private readonly HttpClient _httpClient;
         
-        private const string StandardsRegex = @"<ul[^>]*class=""[^""]*gem-c-document-list[^""]*""[^>]*>(.*?)</ul>";
-        private const string StandardRegex = @"<div class=""gem-c-document-list__item-title"">\s*<a[^>]*href=""([^""]*)""[^>]*>(.*?)</a>";
-        private const string SectionsRegex = @"class=""govuk-accordion__section-header"">\s*<h2[^>]*class=""govuk-accordion__section-heading""[^>]*>\s*<span[^>]*class=""govuk-accordion__section-button""[^>]*>(.*?)</span>";
-        private const string SectionRegex = @"<div[^>]*class=""[^""]*govspeak[^""]*""[^>]*>(.*?)</div>";
+        private const string TopicsRegex = @"<ul[^>]*class=""[^""]*gem-c-document-list[^""]*""[^>]*>(.*?)</ul>";
+        private const string TopicRegex = @"<div class=""gem-c-document-list__item-title"">\s*<a[^>]*href=""([^""]*)""[^>]*>(.*?)</a>";
+        private const string StandardsRegex = @"class=""govuk-accordion__section-header"">\s*<h2[^>]*class=""govuk-accordion__section-heading""[^>]*>\s*<span[^>]*class=""govuk-accordion__section-button""[^>]*>(.*?)</span>";
+        private const string StandardRegex = @"<div[^>]*class=""[^""]*govspeak[^""]*""[^>]*>(.*?)</div>";
 
         private const string SectionsContentMarker = "Show all sections";
 
-        private IList<Standard> _standards;
+        private IEnumerable<TopicModel> _topics;
 
         public IngestionService()
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(Constants.Domain);
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(Constants.Domain)
+            };
 
-            _standards = new List<Standard>();
+            _topics = [];
         }
 
         public async Task Ingest()
         {
-            var parseStandard = (GroupCollection group) => new Standard(group);
-            var parseSectionTitle = (GroupCollection group) => group.Values.Skip(1).First().Value.Trim();
-
             var landingPageHtml = await GetHtml(Constants.SectionsSlug);
-            var sectionsHtml = GetMatch(landingPageHtml, StandardsRegex);
-            var standards = GetMatches(sectionsHtml, StandardRegex, parseStandard);
+            var topicsHtml = RegexHelpers.GetMatch(landingPageHtml, TopicsRegex);
+            _topics = await GetTopics(topicsHtml);
+        }
 
-            foreach (var standard in standards)
+        public async Task Demo()
+        {
+            var transformationService = new TransformationService();
+            var promptService = new PromptService();
+            //var llmService = new LlmService();
+
+            foreach (var topic in _topics)
             {
-                var sectionHtml = await GetHtml(standard.Slug);
-                var contentStart = sectionHtml.IndexOf(SectionsContentMarker);
-                var contentHtml = sectionHtml.Substring(contentStart + SectionsContentMarker.Length);
-
-                var sections = new List<Section>();
-                var sectionTitles = GetMatches(contentHtml, SectionsRegex, parseSectionTitle);
-                foreach(var sectionTitle in sectionTitles)
-                {
-                    var sectionStart = contentHtml.IndexOf(sectionTitle);
-                    var sectionContent = contentHtml.Substring(sectionStart);
-                    var content = GetMatch(sectionContent, SectionRegex);
-                    
-                    sections.Add(new Section(sectionTitle, content));
-                }
-
-                standard.Sections = sections;
-                _standards.Add(standard);
+                var standard = topic.Standards.First();
+                var content = transformationService.TransformContent(standard);
+                var prompts = promptService.GetQuestionAnswerResponsePromptSets(standard.Title, content);
+                //var response = llmService.SendRequest(prompts.First());
+                //var output = llmService.ParseResponse(response);
             }
-
-            Console.WriteLine("Ingestion complete");
         }
 
         private async Task<string> GetHtml(string slug)
@@ -66,31 +58,47 @@ namespace sts_ai_support.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        private string GetMatch(string value, string expression)
+        private async Task<IEnumerable<TopicModel>> GetTopics(string html)
         {
-            var regex = new Regex(expression, RegexOptions.Singleline);
-            var match = regex.Match(value);
-            if (!match.Success)
+            var parseTopic = (GroupCollection group) => new TopicModel(group);
+
+            var topics = new List<TopicModel>();
+
+            var tempTopics = RegexHelpers.GetMatches(html, TopicRegex, parseTopic);
+            foreach (var topic in tempTopics)
             {
-                throw new InvalidDataException("Regular expression returned no match");
+                var topicHtml = await GetHtml(topic.Slug);
+                var contentStart = topicHtml.IndexOf(SectionsContentMarker);
+                if (contentStart < 0)
+                {
+                    throw new InvalidOperationException($"Could not find index of {nameof(SectionsContentMarker)}");
+                }
+
+                topicHtml = topicHtml.Substring(contentStart + SectionsContentMarker.Length);
+                topic.Standards = GetStandards(topicHtml);
+                topics.Add(topic);
             }
 
-            return match.Captures.First().Value.Trim();
+            return topics;
         }
 
-        private IEnumerable<T> GetMatches<T>(string value, string expression, Func<GroupCollection, T> parseFunction)
+        private IEnumerable<StandardModel> GetStandards(string html)
         {
-            var regex = new Regex(expression, RegexOptions.Singleline);
-            var match = regex.Matches(value);
-            if (match == null || match.All(m => !m.Success))
+            var parseStandardTitle = (GroupCollection group) => group.Values.Skip(1).First().Value.Trim();
+
+            var standards = new List<StandardModel>();
+
+            var standardTitles = RegexHelpers.GetMatches(html, StandardsRegex, parseStandardTitle);
+            foreach (var standardTitle in standardTitles)
             {
-                throw new InvalidDataException("Regular expression returned no matches");
+                var standardStart = html.IndexOf(standardTitle);
+                var htmlContent = html.Substring(standardStart);
+                var standardContent = RegexHelpers.GetMatch(htmlContent, StandardRegex);
+
+                standards.Add(new StandardModel(standardTitle, standardContent));
             }
 
-            return match
-                .Where(m => m.Success)
-                .Select(m => m.Groups)
-                .Select(parseFunction);
+            return standards;
         }
     }
 }
