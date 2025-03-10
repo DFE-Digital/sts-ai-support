@@ -2,9 +2,9 @@
 
 public class IngestionBackgroundService : BackgroundService
 {
-    private readonly IngestionService _ingestionService;
+    private readonly IIngestionService _ingestionService;
 
-    public IngestionBackgroundService(IngestionService ingestionService)
+    public IngestionBackgroundService(IIngestionService ingestionService)
     {
         _ingestionService = ingestionService;
     }

@@ -1,12 +1,18 @@
+using sts_ai_support.Models;
 using sts_ai_support.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.Configure<AzureOpenAISettings>(builder.Configuration.GetSection("AzureOpenAI"));
 
-builder.Services.AddSingleton<IngestionService>();
+builder.Services.AddSingleton<ILlmService, LlmService>();
+builder.Services.AddSingleton<IPromptService, PromptService>();
+builder.Services.AddSingleton<ITransformationService, TransformationService>();
+builder.Services.AddSingleton<IIngestionService, IngestionService>();
 builder.Services.AddHostedService<IngestionBackgroundService>();
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 

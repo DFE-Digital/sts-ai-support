@@ -6,18 +6,51 @@
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
     <form method="post">
-        <input type="text" name="prompt" size="80" required/>
+        <!-- Prompt Type Dropdown -->
+        <select asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes">
+            <option value="">-- Select a prompt type --</option>
+        </select>
+
+        <!-- Topic Dropdown -->
+        <select asp-for="SelectedTopicId" asp-items="Model.Topics" id="topicDropdown">
+            <option value="">-- Select a topic --</option>
+        </select>
+
+        <!-- Standard Dropdown (Initially Empty) -->
+        <select asp-for="SelectedStandardId" id="standardDropdown">
+            <option value="">-- Select a standard --</option>
+        </select>
+
+        <!-- Submit Button -->
         <input type="submit" value="Submit" />
     </form>
 
-    <pre style="text-align: left">
-        
-        Example prompts:
-        
-        How many moons does the earth have?
-    </pre>
-
-    @if (Model.Reply != null) {
+    @if (Model.Reply != null)
+    {
         <p class="alert alert-success">@Model.Reply</p>
     }
 </div>
+
+<script>
+    document.getElementById("topicDropdown").addEventListener("change", function () {
+        var topicId = this.value;
+        var standardDropdown = document.getElementById("standardDropdown");
+
+        // Clear existing options
+        standardDropdown.innerHTML = '<option value="">-- Select a standard --</option>';
+
+        if (topicId) {
+            fetch(`/Index?handler=Standards&topicId=${topicId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(standard => {
+                        var option = document.createElement("option");
+                        option.value = standard.value;
+                        option.textContent = standard.text;
+                        standardDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error("Error fetching standards:", error));
+        }
+    });
+</script>

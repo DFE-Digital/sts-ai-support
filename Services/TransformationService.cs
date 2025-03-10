@@ -4,7 +4,7 @@ using sts_ai_support.Models;
 
 namespace sts_ai_support.Services
 {
-    public class TransformationService
+    public class TransformationService : ITransformationService
     {
         private const string ScriptRegex = @"<script\b[^<]*(?:(?!</script>)<[^<]*)*</script>";
         private const string StyleRegex = @"<style\b[^<]*(?:(?!</style>)<[^<]*)*</style>";

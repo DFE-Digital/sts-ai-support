@@ -2,30 +2,24 @@
 using Azure;
 using OpenAI.Chat;
 using sts_ai_support.PromptSets;
+using Microsoft.Extensions.Options;
+using sts_ai_support.Models;
 
 namespace sts_ai_support.Services
 {
-    public class LlmService
+    public class LlmService : ILlmService
     {
-        private const string AzureOpenAiApiKey = "AzureOpenAI:ApiKey";
-        private const string AzureOpenAiDeploymentName = "AzureOpenAI:DeploymentName";
-        private const string AzureOpenAiEndpoint = "AzureOpenAI:Endpoint";
-
         private AzureKeyCredential _apiKey;
         private string _deploymentName;
         private Uri _endpoint;
 
         private AzureOpenAIClient _openAiClient;
 
-        public LlmService(IConfiguration configuration)
+        public LlmService(IOptions<AzureOpenAISettings> azureOpenAiSettings)
         {
-            var apiKey = configuration[AzureOpenAiApiKey] ?? throw new ArgumentNullException(nameof(AzureOpenAiApiKey));
-            var deploymentName = configuration[AzureOpenAiDeploymentName] ?? throw new ArgumentNullException(nameof(AzureOpenAiDeploymentName));
-            var endpoint = configuration[AzureOpenAiEndpoint] ?? throw new ArgumentNullException(nameof(AzureOpenAiEndpoint));
-
-            _apiKey = new AzureKeyCredential(apiKey);
-            _deploymentName = deploymentName;
-            _endpoint = new Uri(endpoint);
+            _apiKey = new AzureKeyCredential(azureOpenAiSettings.Value.ApiKey);
+            _deploymentName = azureOpenAiSettings.Value.DeploymentName;
+            _endpoint = new Uri(azureOpenAiSettings.Value.Endpoint);
 
             _openAiClient = new(_endpoint, _apiKey);
         }

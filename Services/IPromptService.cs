@@ -1,0 +1,9 @@
+﻿using sts_ai_support.PromptSets;
+
+namespace sts_ai_support.Services
+{
+    public interface IPromptService
+    {
+        public IList<PromptSet> GetQuestionAnswerResponsePromptSets(string title, string standard);
+    }
+}

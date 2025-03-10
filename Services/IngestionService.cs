@@ -4,12 +4,15 @@ using sts_ai_support.Models;
 
 namespace sts_ai_support.Services
 {
-    public class IngestionService
+    public class IngestionService : IIngestionService
     {
-        public const string BASE_URL = "";
-
-        private readonly HttpClient _httpClient;
+        public bool LoadingComplete => _topics.Any();
+        public IEnumerable<TopicModel> Topics => LoadingComplete
+            ? _topics
+            : [];
         
+        private readonly HttpClient _httpClient;
+
         private const string TopicsRegex = @"<ul[^>]*class=""[^""]*gem-c-document-list[^""]*""[^>]*>(.*?)</ul>";
         private const string TopicRegex = @"<div class=""gem-c-document-list__item-title"">\s*<a[^>]*href=""([^""]*)""[^>]*>(.*?)</a>";
         private const string StandardsRegex = @"class=""govuk-accordion__section-header"">\s*<h2[^>]*class=""govuk-accordion__section-heading""[^>]*>\s*<span[^>]*class=""govuk-accordion__section-button""[^>]*>(.*?)</span>";
@@ -34,22 +37,6 @@ namespace sts_ai_support.Services
             var landingPageHtml = await GetHtml(Constants.SectionsSlug);
             var topicsHtml = RegexHelpers.GetMatch(landingPageHtml, TopicsRegex);
             _topics = await GetTopics(topicsHtml);
-        }
-
-        public async Task Demo()
-        {
-            var transformationService = new TransformationService();
-            var promptService = new PromptService();
-            //var llmService = new LlmService();
-
-            foreach (var topic in _topics)
-            {
-                var standard = topic.Standards.First();
-                var content = transformationService.TransformContent(standard);
-                var prompts = promptService.GetQuestionAnswerResponsePromptSets(standard.Title, content);
-                //var response = llmService.SendRequest(prompts.First());
-                //var output = llmService.ParseResponse(response);
-            }
         }
 
         private async Task<string> GetHtml(string slug)

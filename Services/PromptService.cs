@@ -2,9 +2,9 @@
 
 namespace sts_ai_support.Services
 {
-    public class PromptService
+    public class PromptService : IPromptService
     {
-        public List<PromptSet> GetQuestionAnswerResponsePromptSets(string title, string standard)
+        public IList<PromptSet> GetQuestionAnswerResponsePromptSets(string title, string standard)
         {
             var promptSets = new List<PromptSet>
             {
