@@ -1,0 +1,7 @@
+﻿@model StandardsViewModel
+
+@foreach (var standard in Model.Standards)
+{
+	<hr />
+	<a href="#" onclick="loadStandard('@Model.TopicId', '@standard.Id')">@standard.Title</a>
+}

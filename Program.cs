@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation;
+
 using sts_ai_support.Models;
 using sts_ai_support.Services;
 
@@ -6,13 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.Configure<AzureOpenAISettings>(builder.Configuration.GetSection("AzureOpenAI"));
 
-builder.Services.AddSingleton<ILlmService, LlmService>();
-builder.Services.AddSingleton<IPromptService, PromptService>();
-builder.Services.AddSingleton<ITransformationService, TransformationService>();
-builder.Services.AddSingleton<IIngestionService, IngestionService>();
-builder.Services.AddHostedService<IngestionBackgroundService>();
+builder.Services
+    .AddSingleton<ILlmService, LlmService>()
+    .AddSingleton<IPromptService, PromptService>()
+    .AddSingleton<ITransformationService, TransformationService>()
+    .AddSingleton<IIngestionService, IngestionService>()
+    .AddHostedService<IngestionBackgroundService>();
 
-builder.Services.AddRazorPages();
+builder.Services
+    .AddRazorPages()
+    .AddRazorRuntimeCompilation();
 
 var app = builder.Build();
 

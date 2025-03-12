@@ -1,0 +1,37 @@
+﻿@model LlmResponseViewModel
+
+<div class="container">
+	@foreach (var question in Model.Questions)
+	{
+		<hr />
+
+		<div class="row">
+			<div class="col">
+				<p>@question.Text</p>
+
+				<div class="container">
+					@foreach (var answer in question.Answers)
+					{
+						<div class="row">
+							<div class="col">
+								<p>@answer.Text</p>
+
+								<div class="container">
+									@foreach (var recommendation in answer.Recommendations)
+									{
+										<div class="row">
+											<div class="col">
+												<p>@recommendation</p>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	}
+</div>

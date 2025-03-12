@@ -1,56 +1,63 @@
 ﻿@page
+@namespace sts_ai_support.Pages
 @model IndexModel
 @{
-    ViewData["Title"] = "STS AI Support";
+	ViewData["Title"] = "STS AI Support";
 }
-<div class="text-center">
-    <h1 class="display-4">@ViewData["Title"]</h1>
-    <form method="post">
-        <!-- Prompt Type Dropdown -->
-        <select asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes">
-            <option value="">-- Select a prompt type --</option>
-        </select>
 
-        <!-- Topic Dropdown -->
-        <select asp-for="SelectedTopicId" asp-items="Model.Topics" id="topicDropdown">
-            <option value="">-- Select a topic --</option>
-        </select>
+<div class="row">
+	<div class="col text-center">
+		<h1 class="display-4">@ViewData["Title"]</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-4 bg-grey">
+		<h2 class="display-5">Topics</h2>
+		<hr />
+		@if (Model.Topics != null)
+		{
+			@foreach (var topic in Model.Topics)
+			{
+				<a href="#" onclick='loadStandards("@topic.Id")'>@topic.Title</a>
+				<div class="container">
+					<div class="row">
+						<div id="standards-@topic.Id" class="col">
+						</div>
+					</div>
+				</div>
+				<hr />
+			}
+		}
+	</div>
 
-        <!-- Standard Dropdown (Initially Empty) -->
-        <select asp-for="SelectedStandardId" id="standardDropdown">
-            <option value="">-- Select a standard --</option>
-        </select>
+	<div class="col-4">
+		<h2 class="display-5">Standard</h2>
+		<hr />
+		<div id="standard">
+			<p>Please select a topic.</p>
+		</div>
+	</div>
 
-        <!-- Submit Button -->
-        <input type="submit" value="Submit" />
-    </form>
+	<div class="col-4 bg-grey">
+		<h2 class="display-5">AI Response</h2>
+		<hr />
+		<form method="post">
+			<!-- Prompt Type Dropdown -->
+			<input id="topicId" name="topicId" type="hidden" />
+			<input id="standardId" name="standardId" type="hidden" />
 
-    @if (Model.Reply != null)
-    {
-        <p class="alert alert-success">@Model.Reply</p>
-    }
+			<label for="prompt-type" class="form-label">Prompt Type</label>
+			<select class="form-select" asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes" name="prompt-type" title="Prompt Type">
+				<option value="">-- Select a prompt type --</option>
+			</select>
+
+			<br />
+
+			<!-- Submit Button -->
+			<input class="btn btn-primary" type="submit" value="Submit" />
+		</form>
+	</div>
 </div>
 
-<script>
-    document.getElementById("topicDropdown").addEventListener("change", function () {
-        var topicId = this.value;
-        var standardDropdown = document.getElementById("standardDropdown");
+<script src="~/js/ajaxScripts.js"></script>
 
-        // Clear existing options
-        standardDropdown.innerHTML = '<option value="">-- Select a standard --</option>';
-
-        if (topicId) {
-            fetch(`/Index?handler=Standards&topicId=${topicId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(standard => {
-                        var option = document.createElement("option");
-                        option.value = standard.value;
-                        option.textContent = standard.text;
-                        standardDropdown.appendChild(option);
-                    });
-                })
-                .catch(error => console.error("Error fetching standards:", error));
-        }
-    });
-</script>

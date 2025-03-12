@@ -4,6 +4,8 @@ using OpenAI.Chat;
 using sts_ai_support.PromptSets;
 using Microsoft.Extensions.Options;
 using sts_ai_support.Models;
+using System.Text.Json;
+using sts_ai_support.ViewModels;
 
 namespace sts_ai_support.Services
 {
@@ -43,15 +45,20 @@ namespace sts_ai_support.Services
             var completionOptions = new ChatCompletionOptions()
             {
                 Temperature = 0.1f,
-                MaxOutputTokenCount = 500,
+                MaxOutputTokenCount = 4000,
             };
 
             return SendRequest(messages, completionOptions);
         }
 
-        public object ParseResponse(string response)
+        public LlmResponseViewModel ParseResponse(string response)
         {
-            return "whoop whoop";
+            response = response.Replace("```json", "").Replace("```", "").Trim();
+
+            var model = JsonSerializer.Deserialize<LlmResponseViewModel>(response);
+            return model is null 
+                ? throw new InvalidOperationException("Could not parse LLM response.") 
+                : model;
         }
     }
 }
