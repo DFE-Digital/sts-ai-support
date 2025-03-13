@@ -2,7 +2,7 @@
 @namespace sts_ai_support.Pages
 @model IndexModel
 @{
-	ViewData["Title"] = "STS AI Support";
+	ViewData["Title"] = "STS AI Content Generator";
 }
 
 <div class="row">
@@ -11,53 +11,17 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-4 bg-grey">
-		<h2 class="display-5">Topics</h2>
-		<hr />
-		@if (Model.Topics != null)
-		{
-			@foreach (var topic in Model.Topics)
-			{
-				<a href="#" onclick='loadStandards("@topic.Id")'>@topic.Title</a>
-				<div class="container">
-					<div class="row">
-						<div id="standards-@topic.Id" class="col">
-						</div>
-					</div>
-				</div>
-				<hr />
-			}
-		}
+	<div class="col-6 text-center" style="margin-top: 5em; margin-bottom: 5em;">
+		<a class="nav-link text-dark" asp-area="" asp-page="/StandardsGenerator">
+			<h2 class="display-6">Click here for the </h2>
+			<h2 class="display-5">Standards Generator</h2>
+		</a>
 	</div>
-
-	<div class="col-4">
-		<h2 class="display-5">Standard</h2>
-		<hr />
-		<div id="standard">
-			<p>Please select a topic.</p>
-		</div>
-	</div>
-
-	<div class="col-4 bg-grey">
-		<h2 class="display-5">AI Response</h2>
-		<hr />
-		<form method="post">
-			<!-- Prompt Type Dropdown -->
-			<input id="topicId" name="topicId" type="hidden" />
-			<input id="standardId" name="standardId" type="hidden" />
-
-			<label for="prompt-type" class="form-label">Prompt Type</label>
-			<select class="form-select" asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes" name="prompt-type" title="Prompt Type">
-				<option value="">-- Select a prompt type --</option>
-			</select>
-
-			<br />
-
-			<!-- Submit Button -->
-			<input class="btn btn-primary" type="submit" value="Submit" />
-		</form>
+	<div class="col-6 text-center" style="margin-top: 5em; margin-bottom: 5em;">
+		<a class="nav-link text-dark" asp-area="" asp-page="/QAGenerator">
+			<h2 class="display-6">Click here for the </h2>
+			<h2 class="display-5">Q&A Generator</h2>
+		</a>
 	</div>
 </div>
-
-<script src="~/js/ajaxScripts.js"></script>
 

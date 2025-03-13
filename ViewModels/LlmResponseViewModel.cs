@@ -3,7 +3,7 @@ using sts_ai_support.Models;
 
 namespace sts_ai_support.ViewModels
 {
-    public class LlmResponseViewModel
+    public class QAResponseViewModel
     {
         [JsonPropertyName("questions")]
         public IEnumerable<QuestionModel> Questions { get; set; }

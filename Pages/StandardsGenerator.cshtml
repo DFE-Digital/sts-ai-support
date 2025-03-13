@@ -1,0 +1,34 @@
+﻿@page
+@namespace sts_ai_support.Pages
+@model StandardsGeneratorModel
+@{
+	ViewData["Title"] = "Standards Generator";
+}
+
+<div class="row">
+	<div class="col text-center">
+		<h1 class="display-4">@ViewData["Title"]</h1>
+	</div>
+	<div id="ai-form" class="col-12">
+		<form method="post">
+			<label for="user-prompt" class="form-label" style"font-weight: bold;">What's the name of the standard you want to create?</label>
+			<input type="text" class="form-control" id="user-prompt" name="user-prompt" />
+
+			<input class="btn btn-primary" type="submit" value="Generate" style="margin-top: 0.5em;" />
+			<br />
+		</form>
+	</div>
+	<div class="col-12 text-center">
+		<div id="generating-spinner" style="display: none; margin: 2em;">
+			<div class="spinner-border text-primary" role="status"></div>	
+			<div>
+				<span class="sr-only">Generating...</span>
+			</div>
+		</div>
+	</div>
+	<div id="ai-response" class="col-12">
+	</div>
+</div>
+
+<script src="~/js/standardsGeneratorScripts.js?v=@DateTime.UtcNow.Ticks"></script>
+

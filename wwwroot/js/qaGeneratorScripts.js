@@ -9,7 +9,7 @@
         }
 
         try {
-            let response = await fetch(`/Index?handler=LoadStandards&topicId=${topicId}`);
+            let response = await fetch(`/QAGenerator?handler=LoadStandards&topicId=${topicId}`);
             let data = await response.text();
             standardsDiv.innerHTML = data;
             standardsDiv.style.display = "block";
@@ -24,7 +24,7 @@
         let standardDiv = document.getElementById('standard');
 
         try {
-            let response = await fetch(`/Index?handler=LoadStandard&topicId=${topicId}&standardId=${standardId}`);
+            let response = await fetch(`/QAGenerator?handler=LoadStandard&topicId=${topicId}&standardId=${standardId}`);
             standardDiv.innerHTML = await response.text();
             standardDiv.style.display = "block";
         } catch (error) {
@@ -40,21 +40,19 @@
         let topicId = document.getElementById("topicId").value;
         let standardId = document.getElementById("standardId").value;
 
-        console.log(topicId, standardId);
-
         let formData = new FormData();
         formData.append("topicId", topicId);
         formData.append("standardId", standardId);
 
-        console.log(formData)
-
         try {
-            let response = await fetch("/Index?handler=Post", {
+            document.getElementById("ai-form").style.display = "none";
+            document.getElementById("generating-spinner").style.display = "block";
+            document.getElementById("ai-response").innerHTML = "";
+
+            let response = await fetch("/QAGenerator?handler=Post", {
                 method: "POST",
                 body: formData,
             });
-
-            console.log(response)
 
             if (!response.ok) throw new Error("Failed to fetch AI response");
 
@@ -62,6 +60,10 @@
         } catch (error) {
             console.error("Error:", error);
             document.getElementById("ai-response").innerHTML = `<pre class="alert alert-danger">Error fetching response.</pre>`;
+        }
+        finally {
+            document.getElementById("ai-form").style.display = "block";
+            document.getElementById("generating-spinner").style.display = "none";
         }
     }
 

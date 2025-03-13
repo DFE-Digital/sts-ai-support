@@ -1,0 +1,68 @@
+﻿@page
+@namespace sts_ai_support.Pages
+@model QAGeneratorModel
+@{
+	ViewData["Title"] = "Q&A Generator";
+}
+
+<div class="row">
+	<div class="col text-center">
+		<h1 class="display-4">@ViewData["Title"]</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col-4 bg-grey">
+		<h2 class="display-5">Topics</h2>
+		<hr />
+		@if (Model.Topics != null)
+		{
+			@foreach (var topic in Model.Topics)
+			{
+				<a href="#" onclick='loadStandards("@topic.Id")'>@topic.Title</a>
+				<div class="container">
+					<div class="row">
+						<div id="standards-@topic.Id" class="col">
+						</div>
+					</div>
+				</div>
+				<hr />
+			}
+		}
+	</div>
+
+	<div class="col-4">
+		<h2 class="display-5">Standard</h2>
+		<hr />
+		<div id="standard">
+			<p>Please select a topic.</p>
+		</div>
+	</div>
+
+	<div class="col-4 bg-grey">
+		<h2 class="display-5">AI Response</h2>
+		<hr />
+		<div id="ai-form">
+			<form method="post">
+				<input id="topicId" name="topicId" type="hidden" />
+				<input id="standardId" name="standardId" type="hidden" />
+
+				<label for="prompt-type" class="form-label" style"font-weight: bold;">Question Type</label>
+				<select class="form-select" asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes" name="prompt-type" title="Prompt Type">
+					<option value="">-- Select a question type --</option>
+				</select>
+
+				<input class="btn btn-primary" type="submit" value="Generate" style="margin-top: 0.5em;" />
+				<br />
+			</form>
+		</div>
+		<div id="generating-spinner" class="text-center" style="display: none;">
+			<div class="spinner-border text-primary" role="status"></div>
+			<div>
+				<span class="sr-only" >Generating...</span>
+			</div>
+		</div>
+		<div id="ai-response"></div>
+	</div>
+</div>
+
+<script src="~/js/qaGeneratorScripts.js?v=@DateTime.UtcNow.Ticks"></script>

@@ -16,12 +16,14 @@
 
   <ItemGroup>
     <Folder Include="NewFolder\" />
-    <Folder Include="PromptSets\Standards\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\js\ajaxScripts.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Update="wwwroot\js\standardsGeneratorScripts.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\js\qaGeneratorScripts.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 

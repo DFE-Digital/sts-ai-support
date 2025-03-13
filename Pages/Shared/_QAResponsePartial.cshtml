@@ -1,0 +1,31 @@
+﻿@model QAResponseViewModel
+
+<div class="container" style="padding-left: 0; padding-right: 0;">
+	@foreach (var question in Model.Questions)
+	{
+		<hr />
+
+		<div class="row">
+			<div class="col">
+				<h5>Question</h5>
+				<p>@question.Text</p>
+
+				<h5>Answers</h5>
+				<ul>
+					@foreach (var answer in question.Answers)
+					{
+						<li>
+							@answer.Text
+							<ul>
+								@foreach (var recommendation in answer.Recommendations)
+								{
+									<li>@recommendation</li>
+								}
+							</ul>
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
+	}
+</div>

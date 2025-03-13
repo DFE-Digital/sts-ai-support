@@ -51,14 +51,21 @@ namespace sts_ai_support.Services
             return SendRequest(messages, completionOptions);
         }
 
-        public LlmResponseViewModel ParseResponse(string response)
+        public T ParseJsonResponse<T>(string response)
         {
             response = response.Replace("```json", "").Replace("```", "").Trim();
 
-            var model = JsonSerializer.Deserialize<LlmResponseViewModel>(response);
-            return model is null 
-                ? throw new InvalidOperationException("Could not parse LLM response.") 
+            var model = JsonSerializer.Deserialize<T>(response);
+            return model is null
+                ? throw new InvalidOperationException("Could not parse LLM response.")
                 : model;
+        }
+
+        public string ParseHtmlResponse(string response)
+        {
+            response = response.Replace("```html", "").Replace("```", "").Trim();
+
+            return response;
         }
     }
 }
