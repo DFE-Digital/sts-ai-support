@@ -13,7 +13,10 @@
 		<form method="post">
 			<label for="user-prompt" class="form-label" style"font-weight: bold;">What's the name of the standard you want to create?</label>
 			<input type="text" class="form-control" id="user-prompt" name="user-prompt" />
-
+			<br />
+			<label for="system-prompt" class="form-label" style"font-weight: bold;">System prompt:</label>
+			<textarea class="form-control" asp-for="SystemPrompt" name="system-prompt" id="system-prompt" rows="20" title="System prompt"></textarea>
+			<br />
 			<input class="btn btn-primary" type="submit" value="Generate" style="margin-top: 0.5em;" />
 			<br />
 		</form>

@@ -2,9 +2,11 @@
 {
     public abstract class PromptSet
     {
-        public abstract string SystemPrompt { get; }
+        public abstract string SystemPrompt { get; set; }
         protected abstract string UserPromptTemplate { get; }
         public string UserPrompt => BuildUserPrompt();
+        public string? Response { get; set; }
+        public abstract string? ChainedPrompt { get; }
 
         protected abstract IDictionary<string, string> GetPromptValues();
         protected abstract void ValidatePromptValues(IDictionary<string, string> promptValues);

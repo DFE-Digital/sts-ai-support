@@ -7,6 +7,19 @@
         private string _standard;
         private string _standardKey = "{{standard}}";
 
+        public override string ChainedPrompt => """
+Compare your responses to the information provided in my first message and reflect on whether they cover all the of the guidance sufficiently.
+Where you identify areas of improvement, adapt your responses accordingly.
+
+Ensure that formatting, structure, tone, and language is refined to match the existing standards and GDS/accessibility requirements.
+
+Ensure that your response does not include contractions, complex language, or phrasing choices that are not helpful when communicating with users.
+
+Do not overcomplicate and increase the formality of the writing to a level that is unnecessary and detrimental.
+
+Return a full set of amended questions/answers/recommendations to replace your first attempt.
+""";
+
         public QuestionAnswerResponsePromptSet(string title, string standard)
         {
             _title = title;

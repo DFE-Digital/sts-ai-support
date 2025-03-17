@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using sts_ai_support.Enums;
+using sts_ai_support.Pages.Shared;
+using sts_ai_support.PromptSets;
 using sts_ai_support.Services;
+using sts_ai_support.ViewModels;
 
 namespace sts_ai_support.Pages
 {
@@ -11,6 +15,11 @@ namespace sts_ai_support.Pages
         private readonly IPromptService _promptService;
         private readonly ILlmService _llmService;
 
+        private PromptSet? _promptSet;
+
+        [BindProperty]
+        public string SystemPrompt { get; set; }
+
         public StandardsGeneratorModel(
             ILogger<IndexModel> logger,
             IPromptService promptService,
@@ -20,20 +29,27 @@ namespace sts_ai_support.Pages
             _logger = logger;
             _promptService = promptService;
             _llmService = llmService;
+
+            _promptSet = _promptService.GetStandardsPromptSet("");
+            SystemPrompt = _promptSet.SystemPrompt;
         }
 
         public void OnGet()
         {
         }
 
-        public async Task<IActionResult> OnPost(string userPrompt)
+        public async Task<IActionResult> OnPost(string userPrompt, string systemPrompt)
         {
-            var prompts = _promptService.GetStandardsPromptSet(userPrompt);
+            _promptSet = _promptService.GetStandardsPromptSet(userPrompt);
+            _promptSet.SystemPrompt = systemPrompt;
 
-            var response = await _llmService.SendRequest(prompts);
-            var content = _llmService.ParseHtmlResponse(response);
+            var response = await _llmService.SendInitialRequest(_promptSet);
+            _promptSet.Response = response;
+            response = await _llmService.ApplyChainedReasoning(_promptSet);
 
-            return Partial("_HtmlResponsePartial", content);
+            var viewName = nameof(Pages_Shared__StandardsResponsePartial).Replace("Pages_Shared_", "");
+            var responseModel = _llmService.ParseJsonResponse<StandardsResponseViewModel>(response);
+            return Partial(viewName, responseModel);
         }
     }
 }

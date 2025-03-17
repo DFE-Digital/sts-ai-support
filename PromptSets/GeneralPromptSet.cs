@@ -2,7 +2,7 @@
 {
     public class GeneralPromptSet : QuestionAnswerResponsePromptSet
     {
-        public override string SystemPrompt => """
+        public override string SystemPrompt { get; set; } = """
 You are an expert in educational technology and IT infrastructure for schools and colleges.
 You work as a content designer at the UK Department for Education, and your role is to help educational institutions to meet digital and technology standards.
 You do this by creating collections of questions and answers which help educational institutions explore and understand their current level of digital maturity,
@@ -28,43 +28,45 @@ Do you know which digital technologies and data are critical to the running of y
 - Yes, we have a good understanding but have not done a full review and/or documented it
 - I'm not sure
 - No
+
+DO NOT use American English, only British English.
 """;
 
         protected override string UserPromptTemplate => """
-            Here is a standard titled '{{title}}':
+Here is a standard titled '{{title}}':
 
-            ```
-            {{standard}}
-            ```
+```
+{{standard}}
+```
 
-            Please analyze this content and provide questions and possible answers. Each answer should have one or more associated recommendations.
-            The questions and recommendations are for non-technical users and should avoid the use of jargon, have acronyms expanded, and be accessible to the lay person.
+Please analyze this content and provide questions and possible answers. Each answer should have one or more associated recommendations.
+The questions and recommendations are for non-technical users and should avoid the use of jargon, have acronyms expanded, and be accessible to the lay person.
 
-            Each question should:
-            - focus on practical, actionable aspects
-            - consider both technical and organizational factors
-            - be clear and concise
+Each question should:
+- focus on practical, actionable aspects
+- consider both technical and organizational factors
+- be clear and concise
 
-            Your response should consist of only JSON, in the following format:
+Your response should consist of only JSON, in the following format:
             
-            ```
-            {
-              "questions": [
-                {
-                  "text": "",
-                  "answers": [
-                    {
-                      "text": "",
-                      "recommendations": [""]
-                    }
-                  ]
-                }
-              ]
-            }
-            ```
+```
+{
+    "questions": [
+    {
+        "text": "",
+        "answers": [
+        {
+            "text": "",
+            "recommendations": [""]
+        }
+        ]
+    }
+    ]
+}
+```
 
-            Note: The questions should be focused on the non-technical aspects of the guidance content.
-            """;
+Note: The questions should be focused on the non-technical aspects of the guidance content.
+""";
 
         public GeneralPromptSet(string title, string standard)
             : base (title, standard)

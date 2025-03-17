@@ -39,10 +39,12 @@
 
         let topicId = document.getElementById("topicId").value;
         let standardId = document.getElementById("standardId").value;
+        let systemPrompt = document.getElementById("system-prompt").value;
 
         let formData = new FormData();
         formData.append("topicId", topicId);
         formData.append("standardId", standardId);
+        formData.append("systemPrompt", systemPrompt);
 
         try {
             document.getElementById("ai-form").style.display = "none";

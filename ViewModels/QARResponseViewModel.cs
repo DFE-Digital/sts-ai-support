@@ -3,9 +3,9 @@ using sts_ai_support.Models;
 
 namespace sts_ai_support.ViewModels
 {
-    public class QAResponseViewModel
+    public class QARResponseViewModel
     {
         [JsonPropertyName("questions")]
-        public IEnumerable<QuestionModel> Questions { get; set; }
+        public required IEnumerable<QuestionModel> Questions { get; set; }
     }
 }

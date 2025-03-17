@@ -11,11 +11,15 @@ namespace sts_ai_support.Services
 {
     public class LlmService : ILlmService
     {
+        private const float TEMPERATURE = 0.5f;
+        private const int MAX_TOKEN_OUTPUT_COUNT = 8000;
+
         private AzureKeyCredential _apiKey;
         private string _deploymentName;
         private Uri _endpoint;
 
         private AzureOpenAIClient _openAiClient;
+        private ChatCompletionOptions _chatCompletionOptions;
 
         public LlmService(IOptions<AzureOpenAISettings> azureOpenAiSettings)
         {
@@ -24,6 +28,11 @@ namespace sts_ai_support.Services
             _endpoint = new Uri(azureOpenAiSettings.Value.Endpoint);
 
             _openAiClient = new(_endpoint, _apiKey);
+            _chatCompletionOptions = new ChatCompletionOptions()
+            {
+                Temperature = TEMPERATURE,
+                MaxOutputTokenCount = MAX_TOKEN_OUTPUT_COUNT,
+            };
         }
 
         public async Task<string> SendRequest(IEnumerable<ChatMessage> messages, ChatCompletionOptions completionOptions)
@@ -34,7 +43,7 @@ namespace sts_ai_support.Services
             return result.Value.Content[0].Text;
         }
 
-        public Task<string> SendRequest(PromptSet prompts)
+        public Task<string> SendInitialRequest(PromptSet prompts)
         {
             var messages = new List<ChatMessage>
             {
@@ -42,13 +51,25 @@ namespace sts_ai_support.Services
                 new UserChatMessage(prompts.UserPrompt)
             };
 
-            var completionOptions = new ChatCompletionOptions()
-            {
-                Temperature = 0.1f,
-                MaxOutputTokenCount = 4000,
-            };
+            return SendRequest(messages, _chatCompletionOptions);
+        }
 
-            return SendRequest(messages, completionOptions);
+        public Task<string> ApplyChainedReasoning(PromptSet prompts)
+        {
+            if (prompts.Response is null)
+            {
+                throw new InvalidOperationException("Cannot used chain reasoning without an initial response");
+            }
+
+            var messages = new List<ChatMessage>
+            {
+                new SystemChatMessage(prompts.SystemPrompt),
+                new UserChatMessage(prompts.UserPrompt),
+                new AssistantChatMessage(prompts.Response),
+                new UserChatMessage(prompts.ChainedPrompt)
+            };
+            
+            return SendRequest(messages, _chatCompletionOptions);
         }
 
         public T ParseJsonResponse<T>(string response)

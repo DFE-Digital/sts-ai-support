@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using OpenAI.Chat;
 using sts_ai_support.Enums;
 using sts_ai_support.Models;
+using sts_ai_support.Pages.Shared;
 using sts_ai_support.PromptSets;
 using sts_ai_support.Services;
 using sts_ai_support.ViewModels;
@@ -20,11 +22,16 @@ namespace sts_ai_support.Pages
         private readonly IPromptService _promptService;
         private readonly ILlmService _llmService;
 
+        private PromptSet? _promptSet;
+
         [BindProperty]
         public bool IsLoaded => _ingestionService.LoadingComplete;
         
         [BindProperty]
         public PromptSetType? SelectedPromptSetType { get; set; } = PromptSetType.General;
+
+        [BindProperty]
+        public string SystemPrompt { get; set; }
 
         public IList<SelectListItem> PromptSetTypes { get; set; }
 
@@ -45,6 +52,9 @@ namespace sts_ai_support.Pages
             _llmService = llmService;
 
             PromptSetTypes = new List<SelectListItem>();
+
+            GetOrSetPromptSet(new StandardModel("", ""));
+            SystemPrompt = _promptSet!.SystemPrompt;
         }
 
         public async Task OnGet()
@@ -100,7 +110,7 @@ namespace sts_ai_support.Pages
             return Partial("_StandardPartial", viewModel);
         }
 
-        public async Task<IActionResult> OnPost(Guid topicId, Guid standardId)
+        public async Task<IActionResult> OnPost(Guid topicId, Guid standardId, string systemPrompt)
         {
             var standard = GetStandard(topicId, standardId);
             if (standard is null)
@@ -108,19 +118,16 @@ namespace sts_ai_support.Pages
                 return Partial("_AlertPartial", "Please select a standard");
             }
 
-            var promptSets = _promptService.GetQuestionAnswerResponsePromptSets(standard.Title, standard.Content);
+            GetOrSetPromptSet(standard);
+            _promptSet!.SystemPrompt = systemPrompt;
 
-            PromptSet prompts = SelectedPromptSetType switch
-            {
-                PromptSetType.General => promptSets.First(ps => ps is GeneralPromptSet),
-                PromptSetType.Technical => promptSets.First(ps => ps is TechnicalPromptSet),
-                _ => throw new ArgumentOutOfRangeException("Not a valid prompt set type")
-            };
+            var response = await _llmService.SendInitialRequest(_promptSet!);
+            _promptSet!.Response = response;
+            response = await _llmService.ApplyChainedReasoning(_promptSet!);
 
-            var response = await _llmService.SendRequest(prompts);
-            var responseModel = _llmService.ParseJsonResponse<QAResponseViewModel>(response);
-
-            return Partial("_QAResponsePartial", responseModel);
+            var viewName = nameof(Pages_Shared__QARResponsePartial).Replace("Pages_Shared_", "");
+            var responseModel = _llmService.ParseJsonResponse<QARResponseViewModel>(response);
+            return Partial(viewName, responseModel);
         }
 
         private StandardModel? GetStandard(Guid topicId, Guid standardId)
@@ -131,6 +138,18 @@ namespace sts_ai_support.Pages
                 .FirstOrDefault(t => t.Id == standardId);
 
             return standard;
+        }
+
+        private void GetOrSetPromptSet(StandardModel standard)
+        {
+            var promptSets = _promptService.GetQuestionAnswerResponsePromptSets(standard.Title, standard.Content);
+
+            _promptSet = SelectedPromptSetType switch
+            {
+                PromptSetType.General => promptSets.First(ps => ps is GeneralPromptSet),
+                PromptSetType.Technical => promptSets.First(ps => ps is TechnicalPromptSet),
+                _ => throw new ArgumentOutOfRangeException("Not a valid prompt set type")
+            };
         }
     }
 }

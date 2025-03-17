@@ -47,10 +47,13 @@
 				<input id="standardId" name="standardId" type="hidden" />
 
 				<label for="prompt-type" class="form-label" style"font-weight: bold;">Question Type</label>
-				<select class="form-select" asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes" name="prompt-type" title="Prompt Type">
+				<select class="form-select" asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes" name="prompt-type" title="Question type">
 					<option value="">-- Select a question type --</option>
 				</select>
-
+				<br />
+				<label for="system-prompt" class="form-label" style"font-weight: bold;">System prompt:</label>
+				<textarea class="form-control" asp-for="SystemPrompt" name="system-prompt" id="system-prompt" rows="20" title="System prompt"></textarea>
+				<br />
 				<input class="btn btn-primary" type="submit" value="Generate" style="margin-top: 0.5em;" />
 				<br />
 			</form>
@@ -58,7 +61,7 @@
 		<div id="generating-spinner" class="text-center" style="display: none;">
 			<div class="spinner-border text-primary" role="status"></div>
 			<div>
-				<span class="sr-only" >Generating...</span>
+				<span class="sr-only">Generating...</span>
 			</div>
 		</div>
 		<div id="ai-response"></div>

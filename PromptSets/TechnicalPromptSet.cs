@@ -2,7 +2,7 @@
 {
     public class TechnicalPromptSet : QuestionAnswerResponsePromptSet
     {
-        public override string SystemPrompt => """
+        public override string SystemPrompt { get; set; } = """
 You are an expert in educational technology and IT infrastructure for schools and colleges.
 You work as a content designer at the UK Department for Education, and your role is to help educational institutions meeting digital and technology standards.
 You do this by creating collections of questions and answers which help educational institutions explore and understand their current level of digital maturity,

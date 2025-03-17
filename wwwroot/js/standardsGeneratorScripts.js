@@ -3,9 +3,11 @@
         event.preventDefault();
 
         let userPrompt = document.getElementById("user-prompt").value;
+        let systemPrompt = document.getElementById("system-prompt").value;
 
         let formData = new FormData();
         formData.append("userPrompt", userPrompt);
+        formData.append("systemPrompt", systemPrompt);
 
         try {
             document.getElementById("ai-form").style.display = "none";
