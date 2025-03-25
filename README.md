@@ -7,7 +7,7 @@ The next stage of development (as of 06/01/25) will involve incorporating our ow
 ## Running locally
 
 ### Pre-requisites
-- .NET 8.0 and IDE for local running
+- .NET 9.0 and IDE for local running
 - [Azure OpenAI 2.1.0](https://www.nuget.org/packages/Azure.AI.OpenAI)
 - Azure subscription with permissions to create Azure OpenAI resources (this may incur costs for you or your organisation)
 

@@ -1,10 +1,14 @@
 ﻿@model QARResponseViewModel
 
+<hr />
 <div class="container" style="padding-left: 0; padding-right: 0;">
+	<div class="row">
+		<div class="col">
+			<h4>@Model.StandardTitle</h4>
+		</div>
+	</div>
 	@foreach (var question in Model.Questions)
 	{
-		<hr />
-
 		<div class="row">
 			<div class="col">
 				<h5>Question</h5>
@@ -27,5 +31,6 @@
 				</ul>
 			</div>
 		</div>
+		<hr />
 	}
 </div>

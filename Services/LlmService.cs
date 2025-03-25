@@ -1,11 +1,10 @@
-﻿using Azure.AI.OpenAI;
+﻿using System.Text.Json;
 using Azure;
-using OpenAI.Chat;
-using sts_ai_support.PromptSets;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.Options;
+using OpenAI.Chat;
 using sts_ai_support.Models;
-using System.Text.Json;
-using sts_ai_support.ViewModels;
+using sts_ai_support.PromptSets;
 
 namespace sts_ai_support.Services
 {

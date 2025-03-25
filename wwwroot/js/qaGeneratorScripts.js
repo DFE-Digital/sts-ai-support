@@ -16,8 +16,6 @@
         } catch (error) {
             console.error("Error loading standards:", error);
         }
-
-        document.getElementById("topicId").value = topicId;
     };
 
     async function loadStandard(topicId, standardId) {
@@ -30,8 +28,6 @@
         } catch (error) {
             console.error("Error loading standard:", error);
         }
-
-        document.getElementById("standardId").value = standardId;
     };
 
     async function submitForm(event) {

@@ -43,17 +43,26 @@
 		<hr />
 		<div id="ai-form">
 			<form method="post">
-				<input id="topicId" name="topicId" type="hidden" />
-				<input id="standardId" name="standardId" type="hidden" />
-
 				<label for="prompt-type" class="form-label" style"font-weight: bold;">Question Type</label>
 				<select class="form-select" asp-for="SelectedPromptSetType" asp-items="Model.PromptSetTypes" name="prompt-type" title="Question type">
 					<option value="">-- Select a question type --</option>
 				</select>
-				<br />
-				<label for="system-prompt" class="form-label" style"font-weight: bold;">System prompt:</label>
-				<textarea class="form-control" asp-for="SystemPrompt" name="system-prompt" id="system-prompt" rows="20" title="System prompt"></textarea>
-				<br />
+
+				<div class="accordion" id="system-prompt-accordion" style="margin-top: 0.5em;">
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="system-prompt-header">
+							<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#system-prompt-textarea" aria-expanded="true" aria-controls="system-prompt-textarea">
+								<strong>Click to view/edit system prompt</strong>
+							</button>
+						</h2>
+						<div id="system-prompt-textarea" class="accordion-collapse collapse" aria-labelledby="system-prompt-header" data-bs-parent="#system-prompt-accordion">
+							<div class="accordion-body">
+								<textarea class="form-control" asp-for="SystemPrompt" name="system-prompt" id="system-prompt" rows="20" title="System prompt"></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+				
 				<input class="btn btn-primary" type="submit" value="Generate" style="margin-top: 0.5em;" />
 				<br />
 			</form>

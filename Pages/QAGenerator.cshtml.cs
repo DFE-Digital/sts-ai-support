@@ -103,6 +103,8 @@ namespace sts_ai_support.Pages
 
             var viewModel = new StandardViewModel
             {
+                TopicId = topicId,
+                StandardId = standardId,
                 Title = standard.Title,
                 Content = standard.Content
             };
@@ -127,6 +129,7 @@ namespace sts_ai_support.Pages
 
             var viewName = nameof(Pages_Shared__QARResponsePartial).Replace("Pages_Shared_", "");
             var responseModel = _llmService.ParseJsonResponse<QARResponseViewModel>(response);
+            responseModel.StandardTitle = standard.Title;
             return Partial(viewName, responseModel);
         }
 

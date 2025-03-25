@@ -1,5 +1,7 @@
 ﻿@model StandardViewModel
 
+<input id="topicId" name="topicId" type="hidden" value="@Model.TopicId" />
+<input id="standardId" name="standardId" type="hidden" value="@Model.StandardId" />
 <h3 id="standard-title" class="standard-title">@Model.Title</h3>
 <hr />
 @Html.Raw(Model.Content)
