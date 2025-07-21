@@ -43,8 +43,8 @@ namespace sts_ai_support.Pages
             _promptSet.SystemPrompt = systemPrompt;
 
             var response = await _llmService.SendInitialRequest(_promptSet);
-            _promptSet.Response = response;
-            response = await _llmService.ApplyChainedReasoning(_promptSet);
+            //_promptSet.Response = response;
+            //response = await _llmService.ApplyChainedReasoning(_promptSet);
 
             var viewName = nameof(Pages_Shared__StandardsResponsePartial).Replace("Pages_Shared_", "");
             var responseModel = _llmService.ParseJsonResponse<StandardsResponseViewModel>(response);
