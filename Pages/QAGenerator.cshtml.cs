@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OpenAI.Chat;
 using sts_ai_support.Enums;
 using sts_ai_support.Models;
 using sts_ai_support.Pages.Shared;
 using sts_ai_support.PromptSets;
 using sts_ai_support.Services;
 using sts_ai_support.ViewModels;
-using System.Text;
-using System.Text.Json;
 
 namespace sts_ai_support.Pages
 {

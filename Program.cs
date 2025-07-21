@@ -4,7 +4,10 @@ using sts_ai_support.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.Configure<AzureOpenAISettings>(builder.Configuration.GetSection("AzureOpenAI"));
+var configurationSection = builder.Configuration.GetSection("AzureOpenAI");
+var configuration = configurationSection.Get<AzureOpenAISettings>();
+Console.WriteLine($"Loaded config: {configuration?.Endpoint} - {configuration?.DeploymentName}");
+builder.Services.Configure<AzureOpenAISettings>(configurationSection);
 
 builder.Services
     .AddSingleton<ILlmService, LlmService>()

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using sts_ai_support.Enums;
 using sts_ai_support.Pages.Shared;
 using sts_ai_support.PromptSets;
 using sts_ai_support.Services;
