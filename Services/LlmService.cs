@@ -16,13 +16,26 @@ namespace sts_ai_support.Services
 
         private HttpClient _httpClient;
 
-        public LlmService(IOptions<AzureOpenAISettings> azureOpenAiSettings)
+        public LlmService(ILoggerFactory loggerFactory, IOptions<AzureOpenAISettings> azureOpenAiSettings)
         {
             _apiKey = azureOpenAiSettings.Value.ApiKey;
             _apiVersion = azureOpenAiSettings.Value.ApiVersion;
 
-            _httpClient = new();
-            _httpClient.BaseAddress = new Uri($"{azureOpenAiSettings.Value.Endpoint}/{azureOpenAiSettings.Value.DeploymentName}/");
+            string uri = string.Empty;
+            try
+            {
+                uri = $"{azureOpenAiSettings.Value.Endpoint}/{azureOpenAiSettings.Value.DeploymentName}/";
+
+                _httpClient = new();
+                _httpClient.BaseAddress = new Uri(uri);
+            }
+            catch (Exception ex)
+            {
+                var logger = loggerFactory.CreateLogger<LlmService>();
+                logger.LogError(ex, $"Could not parse {uri} as a valid URI.");
+
+                throw;
+            }
         }
 
         public async Task<string> SendRequest(IEnumerable<RequestChatMessageModel> messages)

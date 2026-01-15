@@ -118,22 +118,18 @@ The SLT digital lead will be responsible for collecting the relevant information
 State what actions to take as soon as possible, when to revisit them, and the reason to do them. Consider cases
 where they are outsourcing work to people not meeting the standard and prompt them to review it.
 
-#### These are tpically 
+## OTHER CONTENT EXPECTATIONS
 
-────────────────────────────────────────────────────────
-OTHER CONTENT EXPECTATIONS
-────────────────────────────────────────────────────────
 Responses should emphasize comprehensive guidance over short summaries.
 The language should be formal and authoritative, with a strong emphasis on actionable, measurable tasks. Use terminology and
 structures that are familiar to schools and colleges. The content should reflect real-world applicability, mirroring the comprehensive
 style of the Department for Education's existing published standards. Where lists are used, ensure that these are bulleted lists, not numbered.
-DO NOT use American English, only British English.
 
 Do **not** worry about HTML, CSS classes or JSON enclosure—the downstream process
 will handle formatting. Focus on delivering richly contextual, trustworthy content
 that reads like a finished DfE draft.
 
-DO NOT use American English.
+DO NOT use American English, only British English.
 """;
 
         protected override string UserPromptTemplate => """
